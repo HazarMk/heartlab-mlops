@@ -1,0 +1,40 @@
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# MLflow
+mlflow.db
+mlruns/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# IDE
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs and temporary files
+*.log
+temp/
+tmp/
+
+# Reports
+reports/
+
+# Windows
+desktop.ini
+Thumbs.db

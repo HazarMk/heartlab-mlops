@@ -1,0 +1,108 @@
+services:
+  keycloak:
+    profiles: ["identity-admin"]
+    image: quay.io/keycloak/keycloak:26.3
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-local-only-change-this-password}
+    ports: ["127.0.0.1:8080:8080"]
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+      - ./keycloak/heart-demo-realm.json:/opt/keycloak/data/import/heart-demo-realm.json:ro
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports: ["4200:80"]
+    depends_on: [api]
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v3.1.1
+    command: >
+      mlflow server --host 0.0.0.0 --port 5000
+      --backend-store-uri sqlite:////mlflow/mlflow.db
+      --artifacts-destination /mlflow/artifacts --serve-artifacts
+    ports: ["5000:5000"]
+    volumes: ["mlflow-data:/mlflow"]
+
+  qwen-model-init:
+    image: curlimages/curl:latest
+    user: "0:0"
+    entrypoint: ["/bin/sh", "-c"]
+    command: >-
+      if [ ! -s /models/qwen2.5-0.5b-instruct-q4_k_m.gguf ]; then
+        curl -fL --retry 5 --retry-delay 2 --continue-at -
+        https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf?download=true
+        -o /models/qwen2.5-0.5b-instruct-q4_k_m.gguf.part &&
+        mv /models/qwen2.5-0.5b-instruct-q4_k_m.gguf.part /models/qwen2.5-0.5b-instruct-q4_k_m.gguf;
+      fi
+    volumes: ["qwen-model-data:/models"]
+    restart: "no"
+
+  qwen:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    command:
+      - -m
+      - /models/qwen2.5-0.5b-instruct-q4_k_m.gguf
+      - --alias
+      - qwen2.5-0.5b
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - --ctx-size
+      - "2048"
+      - --n-predict
+      - "220"
+    expose: ["8080"]
+    volumes: ["qwen-model-data:/models:ro"]
+    depends_on:
+      qwen-model-init:
+        condition: service_completed_successfully
+
+  trainer:
+    profiles: ["training"]
+    build:
+      context: .
+      dockerfile: Dockerfile.train
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    depends_on: [mlflow]
+
+  api:
+    build: .
+    ports: ["8001:8000"]
+    environment:
+      AUTH_MODE: local
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MODEL_NAME: heart-disease-classifier
+      OIDC_ISSUER: http://127.0.0.1:8080/realms/heart-demo
+      OIDC_JWKS_URL: http://keycloak:8080/realms/heart-demo/protocol/openid-connect/certs
+      OIDC_AUDIENCE: heart-api
+      RESEARCH_READINESS_DB: /mlflow/research_readiness.db
+      PORTAL_DB: /mlflow/portal.db
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1-mini}
+      LOCAL_LLM_BASE_URL: http://qwen:8080
+      LOCAL_LLM_MODEL: qwen2.5-0.5b
+    depends_on:
+      mlflow:
+        condition: service_started
+    volumes:
+      - mlflow-data:/mlflow
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports: ["9090:9090"]
+    volumes: ["./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    depends_on: [api]
+
+volumes:
+  keycloak-data:
+  mlflow-data:
+  qwen-model-data:

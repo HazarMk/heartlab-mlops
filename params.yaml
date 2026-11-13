@@ -1,0 +1,13 @@
+data:
+  target: target
+train:
+  model_name: heart-disease-classifier
+  test_size: 0.2
+  random_state: 42
+  cv_folds: 5
+  n_estimators: 200
+  max_depth: 6
+  target_recall: 0.90
+drift:
+  p_value_threshold: 0.01
+  share_threshold: 0.3

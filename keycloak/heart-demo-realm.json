@@ -1,0 +1,80 @@
+{
+  "realm": "heart-demo",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "accessTokenLifespan": 300,
+  "roles": {
+    "realm": [
+      {
+        "name": "patient",
+        "description": "Patient portal access. Local development realm only."
+      },
+      {
+        "name": "doctor",
+        "description": "Clinician appointment workspace access. Local development realm only."
+      },
+      {
+        "name": "admin",
+        "description": "Account and audit administration. Local development realm only."
+      },
+      {
+        "name": "researcher",
+        "description": "Isolated research workspace access. Local development realm only."
+      },
+      {
+        "name": "research-viewer",
+        "description": "Can view the research readiness workspace."
+      },
+      {
+        "name": "research-editor",
+        "description": "Can update research readiness planning records."
+      },
+      {
+        "name": "research-admin",
+        "description": "Can administer research readiness planning records."
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "heart-frontend",
+      "name": "Heart Demo Frontend",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://127.0.0.1:4200/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200",
+        "http://127.0.0.1:4200"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:4200/*##http://127.0.0.1:4200/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "heart-api audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "heart-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+stages:
+  data:
+    cmd: python src/generate_data.py
+    deps:
+      - src/generate_data.py
+    outs:
+      - data/raw/heart.csv
+  train:
+    cmd: python src/train.py --data-path data/raw/heart.csv
+    deps:
+      - src/train.py
+      - src/features.py
+      - data/raw/heart.csv
+    params:
+      - data
+      - train
+    metrics:
+      - metrics.json:
+          cache: false

@@ -1,0 +1,86 @@
+{
+  "dataset": "UCI Cleveland Heart Disease",
+  "target_recall": 0.9,
+  "candidate": {
+    "accuracy": 0.8032786885245902,
+    "balanced_accuracy": 0.8181818181818181,
+    "precision_at_target_recall": 0.7,
+    "precision_at_threshold": 0.7,
+    "recall_at_threshold": 1.0,
+    "f1": 0.8235294117647058,
+    "roc_auc": 0.949134199134199,
+    "average_precision": 0.934776419678092,
+    "brier_score": 0.09946249373319714,
+    "specificity": 0.6363636363636364,
+    "true_positives": 28,
+    "false_positives": 12,
+    "true_negatives": 21,
+    "false_negatives": 0,
+    "rows": 61,
+    "decision_threshold": 0.29143909318361083,
+    "oof_recall_at_threshold": 0.9009009009009009
+  },
+  "champion": {
+    "accuracy": 0.8852459016393442,
+    "balanced_accuracy": 0.8885281385281385,
+    "precision_at_target_recall": 0.8387096774193549,
+    "precision_at_threshold": 0.8387096774193549,
+    "recall_at_threshold": 0.9285714285714286,
+    "f1": 0.8813559322033898,
+    "roc_auc": 0.949134199134199,
+    "average_precision": 0.934776419678092,
+    "brier_score": 0.09946249373319714,
+    "specificity": 0.8484848484848485,
+    "true_positives": 26,
+    "false_positives": 5,
+    "true_negatives": 28,
+    "false_negatives": 2,
+    "rows": 61,
+    "decision_threshold": 0.5550840913920302
+  },
+  "promoted": false,
+  "candidate_version": "3",
+  "champion_version": "1",
+  "dataset_sha256": "22e12756ee58fc33015f0439de96acca9244c426374ee3086f87066d7c83eed7",
+  "cross_validation": {
+    "roc_auc": {
+      "mean": 0.8983497179149353,
+      "std": 0.02735296218297648
+    },
+    "average_precision": {
+      "mean": 0.9041631443487294,
+      "std": 0.02636272859219501
+    },
+    "balanced_accuracy": {
+      "mean": 0.7973812821638908,
+      "std": 0.026163093466397797
+    }
+  },
+  "candidate_subgroups_exploratory_only": {
+    "sex_code_0": {
+      "rows": 20,
+      "positive_labels": 7,
+      "precision": 0.875,
+      "recall": 1.0
+    },
+    "sex_code_1": {
+      "rows": 41,
+      "positive_labels": 21,
+      "precision": 0.65625,
+      "recall": 1.0
+    },
+    "age_under_55": {
+      "rows": 28,
+      "positive_labels": 7,
+      "precision": 0.5833333333333334,
+      "recall": 1.0
+    },
+    "age_55_or_over": {
+      "rows": 33,
+      "positive_labels": 21,
+      "precision": 0.75,
+      "recall": 1.0
+    }
+  },
+  "clinical_use": false
+}

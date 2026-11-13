@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "mlops-pipeline",
+			"path": "../../../../Downloads/mlops-pipeline"
+		},
+		{
+			"name": "MLOPS-Project",
+			"path": "../.."
+		}
+	],
+	"settings": {}
+}

@@ -1,0 +1,46 @@
+schema: '2.0'
+stages:
+  data:
+    cmd: python src/generate_data.py
+    deps:
+    - path: src/generate_data.py
+      hash: md5
+      md5: e7da5d058dc9e24d049c341f6a450d56
+      size: 2487
+    outs:
+    - path: data/raw/heart.csv
+      hash: md5
+      md5: 3adc2ab92880e4800b14858f514f340b
+      size: 18839
+  train:
+    cmd: python src/train.py --data-path data/raw/heart.csv
+    deps:
+    - path: data/raw/heart.csv
+      hash: md5
+      md5: 3adc2ab92880e4800b14858f514f340b
+      size: 18839
+    - path: src/features.py
+      hash: md5
+      md5: 9c6c0246207c123753622df4125a1978
+      size: 3768
+    - path: src/train.py
+      hash: md5
+      md5: 5613e3d5a5fa3b5d94875a2f9362479c
+      size: 13679
+    params:
+      params.yaml:
+        data:
+          target: target
+        train:
+          model_name: heart-disease-classifier
+          test_size: 0.2
+          random_state: 42
+          cv_folds: 5
+          n_estimators: 200
+          max_depth: 6
+          target_recall: 0.9
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: df91347857550eb3c8d7a9f996a95ab0
+      size: 2431

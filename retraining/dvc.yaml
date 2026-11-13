@@ -1,0 +1,14 @@
+stages:
+  retrain:
+    cmd: python src/train.py --data-path data/incoming/heart_labeled.csv --metrics-path reports/retrain_metrics.json
+    wdir: ..
+    deps:
+      - src/train.py
+      - src/features.py
+      - data/incoming/heart_labeled.csv
+    params:
+      - data
+      - train
+    metrics:
+      - reports/retrain_metrics.json:
+          cache: false
